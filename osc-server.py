@@ -1,30 +1,9 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO, send, emit
 from pythonosc import dispatcher
 from pythonosc import osc_server
+import requests
 import queue
-import json
 import time
-
-app = Flask(__name__)
-
-socketio = SocketIO(app)
-
-
-@socketio.on('connect')
-def client_connected():
-    print("Client connected")
-
-
-@socketio.on('disconnect')
-def client_disconnected():
-    print("Client disconnected")
-
-
-def send_data(data):
-    send(data)
-
-
+import jsonpickle
 
 class OscObject:
     def __init__(self, c, d, t, a, b, g):
@@ -34,6 +13,7 @@ class OscObject:
         self.alpha = a
         self.beta = b
         self.gamma = g
+
 
 class OscSender:
     """ Listens on OSC port and sends the data to a websocket. """
@@ -46,14 +26,17 @@ class OscSender:
 
     def handle_data(self, _, c, d, t, a, b, g):
         time.sleep(0.1)
+        print("data recieved")
         if c < self._register.qsize():
             objs = list()
             while not self._register.empty():
                 objs.append(self._register.get())
-            objs.append(OscObject(c,d,t,a,b,g))
-            # send the array of osc objects here over the websocket
+            objs.append(OscObject(c, d, t, a, b, g))
+            for o in objs:
+                print(o)
+                requests.post("http://localhost:5000", data=jsonpickle.dumps(o))
         else:
-            self._register.put(OscObject(c,d,t,a,b,g))
+            self._register.put(OscObject(c, d, t, a, b, g))
 
     def run(self):
         dispatch = dispatcher.Dispatcher()
@@ -61,11 +44,12 @@ class OscSender:
         server = osc_server.ThreadingOSCUDPServer((self._osc_ip, self._osc_port), dispatch)
         print("Serving now")
         server.serve_forever()
-"""
-if __name__ == "__main__":
-    sender = OscSender("/openbci", "127.0.0.1", 12345, None)
+
+
+def run_osc_app():
+    print("starting osc app")
+    sender = OscSender("/openbci", "127.0.0.1", 12346, None)
     sender.run()
-"""
 
 if __name__ == '__main__':
-    socketio.run(app)
+    run_osc_app()
