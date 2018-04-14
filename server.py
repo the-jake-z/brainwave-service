@@ -1,8 +1,30 @@
+from flask import Flask, render_template
+from flask_socketio import SocketIO, send, emit
 from pythonosc import dispatcher
 from pythonosc import osc_server
 import queue
 import json
 import time
+
+app = Flask(__name__)
+
+socketio = SocketIO(app)
+
+
+@socketio.on('connect')
+def client_connected():
+    print("Client connected")
+
+
+@socketio.on('disconnect')
+def client_disconnected():
+    print("Client disconnected")
+
+
+def send_data(data):
+    send(data)
+
+
 
 class OscObject:
     def __init__(self, c, d, t, a, b, g):
@@ -40,7 +62,11 @@ class OscSender:
         server = osc_server.ThreadingOSCUDPServer((self._osc_ip, self._osc_port), dispatch)
         print("Serving now")
         server.serve_forever()
-
+"""
 if __name__ == "__main__":
     sender = OscSender("/openbci", "127.0.0.1", 12345, None)
     sender.run()
+"""
+
+if __name__ == '__main__':
+    socketio.run(app)
