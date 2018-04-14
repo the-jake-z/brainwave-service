@@ -32,8 +32,8 @@ class OscSender:
             while not self._register.empty():
                 objs.append(self._register.get())
             objs.append(OscObject(c, d, t, a, b, g))
+
             for o in objs:
-                print(o)
                 requests.post("http://localhost:5000", data=jsonpickle.dumps(o))
         else:
             self._register.put(OscObject(c, d, t, a, b, g))

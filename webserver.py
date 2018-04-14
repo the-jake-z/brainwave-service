@@ -18,7 +18,7 @@ def client_disconnected():
 @app.route("/", methods=['POST'])
 def data_recieved():
     data = request.get_json(force=True)
-    send(data)
+    emit('message', data)
 
 if __name__ == '__main__':
     print("sockets listening")
