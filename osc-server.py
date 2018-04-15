@@ -48,7 +48,7 @@ class OscSender:
 
 def run_osc_app():
     print("starting osc app")
-    sender = OscSender("/openbci", "127.0.0.1", 12346, None)
+    sender = OscSender("/openbci", "127.0.0.1", 12349, None)
     sender.run()
 
 if __name__ == '__main__':
