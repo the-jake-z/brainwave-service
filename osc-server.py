@@ -22,10 +22,11 @@ class OscSender:
         self._osc_ip = osc_ip
         self._osc_port = osc_port
         self._web_socket = web_socket
+        self._register = queue.Queue(maxsize=4)
 
     def handle_data(self, _, c, d, t, a, b, g):
         time.sleep(0.1)
-        requests.post("http://localhost:5000", data=jsonpickle.dumps(o))
+        requests.post("http://localhost:5000",data=jsonpickle.dumps(OscObject(c, d, t, a, b, g)))
 
     def run(self):
         dispatch = dispatcher.Dispatcher()
