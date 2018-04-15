@@ -22,21 +22,10 @@ class OscSender:
         self._osc_ip = osc_ip
         self._osc_port = osc_port
         self._web_socket = web_socket
-        self._register = queue.Queue(maxsize=4)
 
     def handle_data(self, _, c, d, t, a, b, g):
         time.sleep(0.1)
-        print("data recieved")
-        if c < self._register.qsize():
-            objs = list()
-            while not self._register.empty():
-                objs.append(self._register.get())
-            objs.append(OscObject(c, d, t, a, b, g))
-
-            for o in objs:
-                requests.post("http://localhost:5000", data=jsonpickle.dumps(o))
-        else:
-            self._register.put(OscObject(c, d, t, a, b, g))
+        requests.post("http://localhost:5000", data=jsonpickle.dumps(o))
 
     def run(self):
         dispatch = dispatcher.Dispatcher()

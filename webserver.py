@@ -24,4 +24,4 @@ def data_recieved():
 
 if __name__ == '__main__':
     print("sockets listening")
-    socketio.run(app, port=5000)
+    socketio.run(app, port=5000, host="0.0.0.0")
