@@ -28,6 +28,10 @@ class OscSender:
         self._count = 0
 
     def handle_data(self, _, c, d, t, a, b, g):
+
+        if c == 3 or c == 4:
+            return
+
         self._mutex.acquire()
         try:
             self._count = (self._count + 1) % 20
@@ -35,7 +39,7 @@ class OscSender:
             self._mutex.release()
 
         if self._count == 0:
-            requests.post("http://localhost:5000",data=jsonpickle.dumps(OscObject(c, d, t, a, b, g)))
+            requests.post("http://localhost:5000", data=jsonpickle.dumps(OscObject(c, d, t, a, b, g)))
 
     def run(self):
         dispatch = dispatcher.Dispatcher()
