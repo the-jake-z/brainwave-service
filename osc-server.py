@@ -34,7 +34,7 @@ class OscSender:
 
         self._mutex.acquire()
         try:
-            self._count = (self._count + 1) % 20
+            self._count = (self._count + 1) % 19
         finally:
             self._mutex.release()
 
